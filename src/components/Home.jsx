@@ -13,6 +13,9 @@ import useStreamConversations from "../hooks/useStreamConversations";
 const Home = () => {
   const [providerState] = useContext(XmtpContext);
   const { convoMessages, client } = providerState;
+
+  console.log(client)
+  
   const [selectedConvo, setSelectedConvo] = useState(null);
   const [msgTxt, setMsgTxt] = useState("");
   const { sendMessage } = useSendMessage(selectedConvo);

@@ -1,9 +1,13 @@
 import { useState, useEffect, useContext } from "react";
-import { WalletContext } from "../contexts/WalletContext";
 import { XmtpContext } from "../contexts/XmtpContext";
 
+import { useDynamicContext } from "@dynamic-labs/sdk-react";
+
 const useStreamConversations = () => {
-  const { walletAddress } = useContext(WalletContext);
+
+  const { primaryWallet } = useDynamicContext();
+  const walletAddress = primaryWallet?.address || null;
+
   const [providerState, setProviderState] = useContext(XmtpContext);
   const { client, convoMessages, conversations } = providerState;
   const [stream, setStream] = useState("");

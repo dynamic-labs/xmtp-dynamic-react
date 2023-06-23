@@ -1,11 +1,27 @@
-import React, { useState, createContext, useEffect, useContext } from "react";
+import React, { useState, createContext, useEffect } from "react";
 import { Client } from "@xmtp/xmtp-js";
-import { WalletContext } from "./WalletContext";
-
+import { useDynamicContext } from '@dynamic-labs/sdk-react';
 export const XmtpContext = createContext();
 
 export const XmtpContextProvider = ({ children }) => {
-  const { signer, walletAddress } = useContext(WalletContext);
+  const [primaryWalletState, setPrimaryWalletState] = useState(null);
+  const [walletAddress, setAddress] = useState(null);
+  const [signer, setSigner] = useState(null);
+
+  const { primaryWallet } = useDynamicContext();
+
+  useEffect(() => {
+    if(primaryWalletState === null && primaryWallet !== null) {
+      setPrimaryWalletState(primaryWallet);
+      setAddress(primaryWallet.address);
+      primaryWallet.connector.getSigner().then((signer) => setSigner(signer));
+    }  else if (primaryWalletState !== null && primaryWallet === null) {
+      setPrimaryWalletState(null);
+      setAddress(null);
+      setSigner(null);
+    }
+  }, [primaryWallet]);
+
   const [providerState, setProviderState] = useState({
     client: null,
     initClient: () => {},
@@ -46,6 +62,7 @@ export const XmtpContextProvider = ({ children }) => {
   };
 
   useEffect(() => {
+    console.log(signer)
     signer ? setProviderState({ ...providerState, initClient }) : disconnect();
     // eslint-disable-next-line
   }, [signer]);

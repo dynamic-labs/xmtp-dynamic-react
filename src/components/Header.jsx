@@ -1,17 +1,37 @@
 import React, { useContext } from "react";
-import { WalletContext } from "../contexts/WalletContext";
 import { shortAddress } from "../utils/utils";
 import xmtpLogo from "../assets/xmtp-logo.png";
 import { XmtpContext } from "../contexts/XmtpContext";
 
+import { useDynamicContext } from '@dynamic-labs/sdk-react';
+import { useState, useEffect } from "react";
+
 const Header = () => {
-  const { connectWallet, walletAddress, signer } = useContext(WalletContext);
+  const [primaryWalletState, setPrimaryWalletState] = useState(null);
+  const [walletAddress, setAddress] = useState(null);
+  const [signer, setSigner] = useState(null);
+
+  const { primaryWallet } = useDynamicContext();
+
+  useEffect(() => {
+    if(primaryWalletState === null && primaryWallet !== null) {
+      setPrimaryWalletState(primaryWallet);
+      setAddress(primaryWallet.address);
+      primaryWallet.connector.getSigner().then((signer) => setSigner(signer));
+    } else if (primaryWalletState !== null && primaryWallet === null) {
+      setPrimaryWalletState(null);
+      setAddress(null);
+      setSigner(null);
+    }
+  }, [primaryWallet]);
+
+
   const [providerState] = useContext(XmtpContext);
 
   return (
     <div className="header flex align-center justify-between">
       <img className="logo" alt="XMTP Logo" src={xmtpLogo} />
-      {walletAddress ? (
+      {walletAddress && (
         <div className="flex align-center header-mobile">
           <h3>{shortAddress(walletAddress)}</h3>
           {!providerState.client && (
@@ -23,12 +43,6 @@ const Header = () => {
             </button>
           )}
         </div>
-      ) : (
-        <button className="btn" onClick={connectWallet}>
-          {!window.ethereum || !window.ethereum.isMetaMask
-            ? "Install MetaMask"
-            : "Connect wallet"}
-        </button>
       )}
     </div>
   );
