@@ -6,7 +6,6 @@ import "./styles/styles.css"
 import "./App.css";
 
 import { DynamicContextProvider } from '@dynamic-labs/sdk-react';
-import { DynamicWidget} from '@dynamic-labs/sdk-react';
 
 window.Buffer = Buffer;
 
@@ -17,8 +16,6 @@ function App() {
         settings={{
           environmentId: '4e598b41-f388-489b-a0b3-d24064b1d1ed'
         }}>
-          <DynamicWidget /> 
-
           <XmtpContextProvider>
             <Home />
           </XmtpContextProvider>

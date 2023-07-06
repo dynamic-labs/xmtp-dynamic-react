@@ -4,21 +4,22 @@ import { useDynamicContext } from '@dynamic-labs/sdk-react';
 export const XmtpContext = createContext();
 
 export const XmtpContextProvider = ({ children }) => {
-  const [primaryWalletState, setPrimaryWalletState] = useState(null);
+  // const [primaryWalletState, setPrimaryWalletState] = useState(null);
   const [walletAddress, setAddress] = useState(null);
   const [signer, setSigner] = useState(null);
 
   const { primaryWallet } = useDynamicContext();
 
   useEffect(() => {
-    if(primaryWalletState === null && primaryWallet !== null) {
-      setPrimaryWalletState(primaryWallet);
-      setAddress(primaryWallet.address);
-      primaryWallet.connector.getSigner().then((signer) => setSigner(signer));
-    }  else if (primaryWalletState !== null && primaryWallet === null) {
-      setPrimaryWalletState(null);
-      setAddress(null);
-      setSigner(null);
+    const getAndSetSigner = async () => {
+      const signer = await primaryWallet.connector.getSigner();
+      setSigner(signer);
+    };
+
+    if (primaryWallet) {
+      const { address } = primaryWallet;
+      setAddress(address);
+      getAndSetSigner();
     }
   }, [primaryWallet]);
 
@@ -30,8 +31,8 @@ export const XmtpContextProvider = ({ children }) => {
     convoMessages: new Map(),
   });
 
-  const initClient = async (wallet) => {
-    if (wallet && !providerState.client) {
+  const initClient = async (signer) => {
+    if (signer && !providerState.client) {
       try {
         const keys = await Client.getKeys(signer, { env: "dev" });
         const client = await Client.create(null, {
@@ -62,7 +63,6 @@ export const XmtpContextProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    console.log(signer)
     signer ? setProviderState({ ...providerState, initClient }) : disconnect();
     // eslint-disable-next-line
   }, [signer]);
