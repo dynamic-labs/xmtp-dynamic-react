@@ -1,6 +1,6 @@
 import { useState, useEffect, useContext } from "react";
 import { XmtpContext } from "../contexts/XmtpContext";
-import { useDynamicContext } from "@dynamic-labs/sdk-react";
+import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
 
 const useStreamMessages = (peerAddress) => {
   const { primaryWallet } = useDynamicContext();

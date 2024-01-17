@@ -1,6 +1,6 @@
 import React, { useState, createContext, useEffect } from "react";
 import { Client } from "@xmtp/xmtp-js";
-import { useDynamicContext } from '@dynamic-labs/sdk-react';
+import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
 export const XmtpContext = createContext();
 
 export const XmtpContextProvider = ({ children }) => {
