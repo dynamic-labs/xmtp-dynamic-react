@@ -31,9 +31,12 @@ export const XmtpContextProvider = ({ children }) => {
     convoMessages: new Map(),
   });
 
-  const initClient = async (signer) => {
+  const initClient = async () => {
     if (signer && !providerState.client) {
       try {
+        console.log("Initializing client");
+        console.log(signer);
+
         const keys = await Client.getKeys(signer, { env: "dev" });
         const client = await Client.create(null, {
           env: "dev",

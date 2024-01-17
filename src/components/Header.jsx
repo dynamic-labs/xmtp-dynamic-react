@@ -2,23 +2,14 @@ import React, { useContext } from "react";
 import { shortAddress } from "../utils/utils";
 import xmtpLogo from "../assets/xmtp-logo.png";
 import { XmtpContext } from "../contexts/XmtpContext";
-
 import { useDynamicContext, DynamicWidget } from "@dynamic-labs/sdk-react-core";
 
 const Header = () => {
   const [providerState] = useContext(XmtpContext);
   const { primaryWallet } = useDynamicContext();
 
-  const getSigner = async () => {
-    return await primaryWallet.connector.getWalletClient();
-  };
-
-  const initClientWithSigner = async () => {
-    const signer = await getSigner();
-
-    console.log(signer);
-
-    return providerState.initClient(signer);
+  const initClientWithSigner = () => {
+    return providerState.initClient();
   };
 
   return (
