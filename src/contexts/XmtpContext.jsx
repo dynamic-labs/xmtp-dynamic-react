@@ -3,6 +3,8 @@ import { Client } from "@xmtp/xmtp-js";
 import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
 export const XmtpContext = createContext();
 
+import { createWalletClient, custom } from "viem";
+
 export const XmtpContextProvider = ({ children }) => {
   // const [primaryWalletState, setPrimaryWalletState] = useState(null);
   const [walletAddress, setAddress] = useState(null);
@@ -12,8 +14,19 @@ export const XmtpContextProvider = ({ children }) => {
 
   useEffect(() => {
     const getAndSetSigner = async () => {
-      const signer = await primaryWallet.connector.getSigner();
-      setSigner(signer);
+      const internalWalletClient =
+        await primaryWallet.connector.getWalletClient();
+      console.log(internalWalletClient);
+
+      const walletClient = createWalletClient({
+        chain: internalWalletClient.chain,
+        transport: custom(internalWalletClient.transport),
+        account: walletAddress,
+      });
+
+      console.log(walletClient);
+
+      setSigner(walletClient);
     };
 
     if (primaryWallet) {
